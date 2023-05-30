@@ -7,46 +7,60 @@ public class PlayerScript : MonoBehaviour
 
     
     //movement
-    public Rigidbody2D rb;
-    public float speed, initialspeed;
-    public float HorizontalMovement, VerticalMovement;
-    private Vector3 oldPosition;
-    public Vector2 Velocity;
+    [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private LayerMask groundLayer;
+
+    private bool isGrounded = false;
+    private float speed = 5f;
+    private bool isFacingRight = true;
+    private float HorizontalMovement, VerticalMovement;
+
     public bool CanMove = true;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        initialspeed = speed;
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
-        if(CanMove) {
-
+        if(CanMove){
+            // initializes movement
             HorizontalMovement = Input.GetAxisRaw("Horizontal");
             VerticalMovement = Input.GetAxisRaw("Vertical");
-            if(HorizontalMovement < 0) {
-                transform.localScale = new Vector3(-0.12f, 0.12f, 1);
-            } else if(HorizontalMovement > 0) {
-                transform.localScale = new Vector3(0.12f, 0.12f, 1);
+
+
+            //check if player is grounded
+            isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+
+            // flips the players direction
+            if( (isFacingRight && HorizontalMovement < 0) || (!isFacingRight && HorizontalMovement > 0))
+            {
+                isFacingRight = !isFacingRight;
+                transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y,transform.localScale.z);
+                
+            }
+
+            //jumping
+            if(Input.GetButtonDown("Jump") && isGrounded)
+            {
+                rb.AddForce(transform.up * 5f, ForceMode2D.Impulse);
             }
 
 
-        } else {HorizontalMovement = 0f; VerticalMovement = 0f;}
-        if (Input.GetKeyDown(KeyCode.LeftShift)) {speed = initialspeed + 2;}
-        if (Input.GetKeyUp(KeyCode.LeftShift)) {speed = initialspeed;}
+
+
+        }
     }
 
     void FixedUpdate()
     {
-
-        Velocity = new Vector2(oldPosition.x - transform.position.x, oldPosition.y - transform.position.y);
-        oldPosition = transform.position;
-        transform.Translate( HorizontalMovement * speed * Time.fixedDeltaTime, 0, 0);
         
+            //movement
+            transform.Translate(HorizontalMovement * speed * Time.fixedDeltaTime, 0f, 0f);
     }
 }
