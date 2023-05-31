@@ -22,7 +22,7 @@ public class PlayerScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        GameManager.instance.Player = this.gameObject;
     }
 
     // Update is called once per frame

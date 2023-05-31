@@ -1,0 +1,2 @@
+1. Must delete all "save managers" and "game managers" except from the main menu. (they are only there until the main menu is sorted out)
+2.
